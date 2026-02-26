@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#0C1021" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>CheckIn Audiências</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+      *, *::before, *::after { box-sizing: border-box; }
+      html, body, #root {
+        margin: 0; padding: 0; height: 100%;
+        background: #0C1021;
+        font-family: 'Inter', sans-serif;
+        -webkit-tap-highlight-color: transparent;
+      }
+      /* Wrapper móvel centralizado em desktop */
+      #root {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+      }
+      #app-shell {
+        width: 100%;
+        max-width: 430px;
+        min-height: 100svh;
+        position: relative;
+        overflow: hidden;
+        background: #0C1021;
+        box-shadow: 0 0 40px rgba(0,0,0,0.6);
+      }
+      ::-webkit-scrollbar { width: 4px; }
+      ::-webkit-scrollbar-track { background: #0C1021; }
+      ::-webkit-scrollbar-thumb { background: #374155; border-radius: 2px; }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <div id="app-shell">
+        <div id="react-root"></div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
