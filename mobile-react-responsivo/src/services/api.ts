@@ -1,5 +1,6 @@
 import axios from 'axios'
 import type { Audiencia, CheckinRequest, CheckinResponse, Checkin, Notificacao, Questionario } from '@/types'
+import { installMockAdapter } from '@/mock/adapter'
 
 const api = axios.create({
   baseURL: '/api/v1',
@@ -7,7 +8,8 @@ const api = axios.create({
   headers: { 'Content-Type': 'application/json' },
 })
 
-// Interceptor: injetar token de auth
+installMockAdapter(api)
+
 api.interceptors.request.use((config) => {
   const token = sessionStorage.getItem('auth_token') || 'mock-token-foursys'
   config.headers.Authorization = `Bearer ${token}`
@@ -89,24 +91,29 @@ export async function getNotificacoes(): Promise<Notificacao[]> {
     id: String(n.id),
     tipo: (n.tipo as string) || 'info',
     titulo: String(n.titulo),
-    mensagem: String(n.mensagem),
-    data: String(n.data_hora || n.data || ''),
+    mensagem: String(n.mensagem ?? n.corpo),
+    data: String(n.data_hora || n.created_at || n.data || ''),
     lida: Boolean(n.lida),
     audienciaId: n.audiencia_id ? String(n.audiencia_id) : undefined,
   }))
 }
 
-// ─── Questionário (mock local) ─────────────────────────────────────────────
-export async function getQuestionario(_audienciaId: string): Promise<Questionario> {
+// ─── Questionário ─────────────────────────────────────────────────────────────
+export async function getQuestionario(audienciaId: string): Promise<Questionario> {
+  const { data } = await api.get('/questionarios/templates')
+  const templates = data.data || data
+  const tpl = templates[0]
   return {
-    id: 'q1',
-    audienciaId: _audienciaId,
-    titulo: 'Pesquisa de Satisfação',
-    perguntas: [
-      { id: 'p1', texto: 'Como você avalia o ambiente da audiência?', tipo: 'escala', obrigatoria: true },
-      { id: 'p2', texto: 'O processo de check-in foi fácil?', tipo: 'multipla_escolha', opcoes: ['Sim', 'Não', 'Parcialmente'], obrigatoria: true },
-      { id: 'p3', texto: 'Comentários adicionais (opcional)', tipo: 'texto', obrigatoria: false },
-    ],
+    id: tpl?.id || 'q1',
+    audienciaId,
+    titulo: tpl?.titulo || 'Pesquisa de Satisfação',
+    perguntas: (tpl?.perguntas || []).map((p: Record<string, unknown>) => ({
+      id: String(p.id),
+      texto: String(p.texto),
+      tipo: p.tipo as string,
+      opcoes: p.opcoes as string[] | undefined,
+      obrigatoria: Boolean(p.obrigatoria),
+    })),
   }
 }
 
