@@ -43,7 +43,7 @@ export default function QuestionarioPage() {
     const obrigatorias = questionario.perguntas.filter((p) => p.obrigatoria)
     const todasRespondidas = obrigatorias.every((p) => respostas[p.id] !== undefined && respostas[p.id] !== '')
     if (!todasRespondidas) { alert('Responda todas as perguntas obrigatórias.'); return }
-    const _payload: RespostaQuestionario[] = Object.entries(respostas).map(([id, val]) => ({ perguntaId: id, resposta: val }))
+    Object.entries(respostas).map(([id, val]) => ({ perguntaId: id, resposta: val })) as RespostaQuestionario[]
     setEnviado(true)
   }
 
