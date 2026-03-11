@@ -27,6 +27,7 @@ export async function getAudiencias(): Promise<Audiencia[]> {
     horarioInicio: a.horario_inicio || '09:00',
     horarioFim: a.horario_fim || '11:00',
     local: a.local || a.sala || 'Sala 1',
+    endereco: a.endereco ? String(a.endereco) : undefined,
     latitude: Number(a.latitude ?? -23.5505),
     longitude: Number(a.longitude ?? -46.6333),
     raioGeofenceMetros: Number(a.raio_geofence_metros ?? 100),

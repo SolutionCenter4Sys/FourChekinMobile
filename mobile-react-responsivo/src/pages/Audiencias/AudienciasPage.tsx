@@ -12,6 +12,7 @@ import Button from '@mui/material/Button'
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined'
 import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined'
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined'
+import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined'
 import Badge from '@mui/material/Badge'
 import { COLORS } from '@/theme'
 import { getAudiencias } from '@/services/api'
@@ -101,11 +102,18 @@ function AudienciaCard({ audiencia }: { audiencia: Audiencia }) {
         transition: 'opacity 0.1s',
       }}
     >
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 0.5 }}>
         <Typography sx={{ color: COLORS.white, fontWeight: 600, fontSize: 15, flex: 1, mr: 1, lineHeight: 1.3 }}>
           {audiencia.nome}
         </Typography>
         <StatusBadge status={audiencia.status} />
+      </Box>
+
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1 }}>
+        <BusinessOutlinedIcon sx={{ color: COLORS.orange, fontSize: 13 }} />
+        <Typography sx={{ color: COLORS.gray3, fontSize: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {audiencia.departamento}
+        </Typography>
       </Box>
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.5 }}>
@@ -115,11 +123,18 @@ function AudienciaCard({ audiencia }: { audiencia: Audiencia }) {
         </Typography>
       </Box>
 
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1.5 }}>
-        <LocationOnOutlinedIcon sx={{ color: COLORS.gray3, fontSize: 13 }} />
-        <Typography sx={{ color: COLORS.gray3, fontSize: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {audiencia.local}
-        </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 0.5, mb: 1.5 }}>
+        <LocationOnOutlinedIcon sx={{ color: COLORS.gray3, fontSize: 13, mt: '2px', flexShrink: 0 }} />
+        <Box>
+          <Typography sx={{ color: COLORS.gray3, fontSize: 12, lineHeight: 1.4 }}>
+            {audiencia.local}
+          </Typography>
+          {audiencia.endereco && (
+            <Typography sx={{ color: COLORS.gray3, fontSize: 11, lineHeight: 1.4, opacity: 0.75 }}>
+              {audiencia.endereco}
+            </Typography>
+          )}
+        </Box>
       </Box>
 
       <LinearProgress

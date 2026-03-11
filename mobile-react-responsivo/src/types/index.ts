@@ -12,6 +12,7 @@ export interface Audiencia {
   horarioInicio: string
   horarioFim: string
   local: string
+  endereco?: string
   latitude: number
   longitude: number
   raioGeofenceMetros: number
