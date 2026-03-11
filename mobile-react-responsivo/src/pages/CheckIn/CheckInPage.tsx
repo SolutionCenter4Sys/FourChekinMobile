@@ -78,8 +78,16 @@ export default function CheckInPage() {
           distanciaMetros: dist,
         })
       },
-      () => setGeoResult({ status: 'sem_permissao', mensagem: 'Permissão de localização negada.' }),
-      { enableHighAccuracy: true, timeout: 10000 }
+      (err) => {
+        if (err.code === 1) {
+          setGeoResult({ status: 'sem_permissao', mensagem: 'Permissão de localização negada. Acesse as configurações do navegador/dispositivo e habilite o acesso à localização para este site.' })
+        } else if (err.code === 3) {
+          setGeoResult({ status: 'gps_indisponivel', mensagem: 'Tempo limite excedido ao obter localização. Verifique se o GPS está ativo e tente novamente.' })
+        } else {
+          setGeoResult({ status: 'gps_indisponivel', mensagem: 'Não foi possível obter sua localização. Verifique se o GPS está habilitado no dispositivo.' })
+        }
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 30000 }
     )
   }
 
@@ -125,7 +133,8 @@ export default function CheckInPage() {
   }
 
   const cfg = geoResult ? STATUS_CFG[geoResult.status] : STATUS_CFG.verificando
-  const podeCheckin = geoResult?.status === 'dentro' || geoResult?.status === 'offline'
+  const podeCheckin = geoResult?.status === 'dentro' || geoResult?.status === 'offline' ||
+    (geoResult?.status === 'sem_permissao' && audiencia?.offlineHabilitado === true)
 
   return (
     <AppShell showNav={false}>
@@ -192,8 +201,17 @@ export default function CheckInPage() {
               onClick={realizarCheckin}
               disabled={loading}
             >
-              {loading ? 'Registrando...' : geoResult?.status === 'offline' ? 'Check-in Offline' : 'Realizar Check-in'}
+              {loading ? 'Registrando...' : geoResult?.status === 'dentro' ? 'Realizar Check-in' : 'Check-in sem GPS'}
             </Button>
+          )}
+          {!podeCheckin && geoResult?.status === 'sem_permissao' && (
+            <Box sx={{ background: COLORS.raised, borderRadius: 2, p: 1.5, border: `1px solid ${COLORS.red}44`, mb: 1 }}>
+              <Typography sx={{ color: COLORS.gray3, fontSize: 12, lineHeight: 1.6 }}>
+                Como habilitar a localização:{'\n'}
+                <strong style={{ color: COLORS.white }}>Chrome/Android:</strong> Toque no ícone de cadeado na barra de endereços → Permissões → Localização → Permitir.{'\n'}
+                <strong style={{ color: COLORS.white }}>Safari/iOS:</strong> Ajustes → Safari → Localização → Permitir.
+              </Typography>
+            </Box>
           )}
           {!podeCheckin && (
             <Button variant="outlined" startIcon={<RefreshIcon />} onClick={verificarGeofence}>

@@ -23,13 +23,16 @@ import GeoMap from '@/components/GeoMap'
 import AppShell from '@/components/AppShell'
 import type { Audiencia } from '@/types'
 
-function InfoRow({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+function InfoRow({ icon, label, value, subvalue }: { icon: React.ReactNode; label: string; value: string; subvalue?: string }) {
   return (
     <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'flex-start', py: 1.5 }}>
       <Box sx={{ color: COLORS.orange, mt: '2px' }}>{icon}</Box>
       <Box>
         <Typography sx={{ color: COLORS.gray4, fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>{label}</Typography>
         <Typography sx={{ color: COLORS.white, fontSize: 14, mt: 0.25 }}>{value}</Typography>
+        {subvalue && (
+          <Typography sx={{ color: COLORS.gray3, fontSize: 12, mt: 0.25, lineHeight: 1.4 }}>{subvalue}</Typography>
+        )}
       </Box>
     </Box>
   )
@@ -109,7 +112,7 @@ export default function AudienciaDetalhePage() {
           <InfoRow icon={<CalendarTodayIcon fontSize="small" />} label="Data e Horário"
             value={`${audiencia.data ? fmt.format(new Date(audiencia.data + 'T12:00:00')) : ''} · ${audiencia.horarioInicio} – ${audiencia.horarioFim}`} />
           <Divider sx={{ borderColor: COLORS.border }} />
-          <InfoRow icon={<LocationOnIcon fontSize="small" />} label="Local" value={audiencia.local} />
+          <InfoRow icon={<LocationOnIcon fontSize="small" />} label="Local" value={audiencia.local} subvalue={audiencia.endereco} />
           <Divider sx={{ borderColor: COLORS.border }} />
           <InfoRow icon={<PeopleIcon fontSize="small" />} label="Participantes"
             value={`${audiencia.presentes} de ${audiencia.totalParticipantes} presentes`} />
