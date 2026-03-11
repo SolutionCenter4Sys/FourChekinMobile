@@ -128,13 +128,14 @@ export default function CheckInPage() {
     dentro:           { color: COLORS.green,  icon: <CheckCircleOutlineIcon sx={{ fontSize: 60 }} />,  titulo: 'Dentro do Geofence',        subtitulo: geoResult?.mensagem ?? '' },
     fora:             { color: COLORS.red,    icon: <LocationOffOutlinedIcon sx={{ fontSize: 60 }} />, titulo: 'Fora do Geofence',          subtitulo: geoResult?.mensagem ?? '' },
     offline:          { color: COLORS.amber,  icon: <WifiOffIcon sx={{ fontSize: 60 }} />,             titulo: 'Modo Offline',              subtitulo: geoResult?.mensagem ?? '' },
-    gps_indisponivel: { color: COLORS.red,    icon: <GpsOffIcon sx={{ fontSize: 60 }} />,              titulo: 'GPS Indisponível',          subtitulo: geoResult?.mensagem ?? '' },
-    sem_permissao:    { color: COLORS.red,    icon: <LocationDisabledIcon sx={{ fontSize: 60 }} />,    titulo: 'Permissão Negada',          subtitulo: geoResult?.mensagem ?? '' },
+    gps_indisponivel: { color: audiencia?.offlineHabilitado ? COLORS.amber : COLORS.red, icon: <GpsOffIcon sx={{ fontSize: 60 }} />, titulo: audiencia?.offlineHabilitado ? 'GPS Indisponível — Offline' : 'GPS Indisponível', subtitulo: geoResult?.mensagem ?? '' },
+    sem_permissao:    { color: audiencia?.offlineHabilitado ? COLORS.amber : COLORS.red, icon: <LocationDisabledIcon sx={{ fontSize: 60 }} />, titulo: audiencia?.offlineHabilitado ? 'Permissão Negada — Offline' : 'Permissão Negada', subtitulo: geoResult?.mensagem ?? '' },
   }
 
   const cfg = geoResult ? STATUS_CFG[geoResult.status] : STATUS_CFG.verificando
+  const semGps = geoResult?.status === 'sem_permissao' || geoResult?.status === 'gps_indisponivel'
   const podeCheckin = geoResult?.status === 'dentro' || geoResult?.status === 'offline' ||
-    (geoResult?.status === 'sem_permissao' && audiencia?.offlineHabilitado === true)
+    (semGps && audiencia?.offlineHabilitado === true)
 
   return (
     <AppShell showNav={false}>
@@ -204,23 +205,20 @@ export default function CheckInPage() {
               onClick={realizarCheckin}
               disabled={loading}
             >
-              {loading ? 'Registrando...' : geoResult?.status === 'dentro' ? 'Realizar Check-in' : 'Check-in sem GPS'}
+              {loading ? 'Registrando...' : geoResult?.status === 'dentro' ? 'Realizar Check-in' : 'Confirmar Presença (sem GPS)'}
             </Button>
           )}
           {!podeCheckin && geoResult?.status === 'sem_permissao' && (
             <Box sx={{ background: COLORS.raised, borderRadius: 2, p: 1.5, border: `1px solid ${COLORS.red}44`, mb: 1 }}>
               <Typography sx={{ color: COLORS.gray3, fontSize: 12, lineHeight: 1.6 }}>
-                Como habilitar a localização:{'\n'}
                 <strong style={{ color: COLORS.white }}>Chrome/Android:</strong> Toque no ícone de cadeado na barra de endereços → Permissões → Localização → Permitir.{'\n'}
                 <strong style={{ color: COLORS.white }}>Safari/iOS:</strong> Ajustes → Safari → Localização → Permitir.
               </Typography>
             </Box>
           )}
-          {!podeCheckin && (
-            <Button variant="outlined" startIcon={<RefreshIcon />} onClick={verificarGeofence}>
-              Atualizar Localização
-            </Button>
-          )}
+          <Button variant="outlined" startIcon={<RefreshIcon />} onClick={verificarGeofence}>
+            Atualizar Localização
+          </Button>
         </Box>
 
         {geoResult?.latitude && (
