@@ -189,6 +189,9 @@ export default function CheckInPage() {
           <Box sx={{ background: COLORS.surface, borderRadius: 2, p: 2, border: `1px solid ${COLORS.border}`, width: '100%', textAlign: 'center' }}>
             <Typography sx={{ color: COLORS.white, fontWeight: 600, fontSize: 14, mb: 0.5 }}>{audiencia.nome}</Typography>
             <Typography sx={{ color: COLORS.gray3, fontSize: 12 }}>{audiencia.horarioInicio} – {audiencia.horarioFim} · {audiencia.local}</Typography>
+            {audiencia.endereco && (
+              <Typography sx={{ color: COLORS.gray3, fontSize: 11, mt: 0.5, opacity: 0.75, lineHeight: 1.4 }}>{audiencia.endereco}</Typography>
+            )}
           </Box>
         )}
 
